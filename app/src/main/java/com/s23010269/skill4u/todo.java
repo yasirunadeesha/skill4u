@@ -38,7 +38,7 @@ public class todo extends AppCompatActivity {
 
         todoItems = new ArrayList<>();
 
-        // Show ALL by default
+
         showAllList();
 
         createBtn.setOnClickListener(v -> showCreateTodoPopup());

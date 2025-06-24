@@ -96,13 +96,13 @@ public class home extends AppCompatActivity {
         String[] daysOfWeek = {"M", "T", "W", "T", "F", "S", "S"};
 
         Calendar calendar = Calendar.getInstance();
-        int todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK); // 1 = Sunday, 2 = Monday, etc.
+        int todayDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
         int todayDate = calendar.get(Calendar.DAY_OF_MONTH);
 
-        // Shift to Monday
+
         int offset = todayDayOfWeek - Calendar.MONDAY;
         if (offset < 0) offset += 7;
-        calendar.add(Calendar.DATE, -offset); // Go back to the previous Monday
+        calendar.add(Calendar.DATE, -offset);
 
 
         for (int i = 0; i < 7; i++) {
@@ -138,7 +138,7 @@ public class home extends AppCompatActivity {
             dayLayout.addView(dateText);
             calendarLayout.addView(dayLayout);
 
-            calendar.add(Calendar.DATE, 1); // Move to next day
+            calendar.add(Calendar.DATE, 1);
         }
     }
 

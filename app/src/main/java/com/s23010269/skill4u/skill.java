@@ -57,27 +57,27 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         dbHelper = new DatabaseHelper(this);
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        // Get current username passed from previous activity
+
         currentUsername = getIntent().getStringExtra("USERNAME");
         if (currentUsername == null) currentUsername = ""; // fallback
 
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
-        // Initially disable the "Find Users Nearby" button if location not enabled
+
         getstarted.setEnabled(false);
 
         locationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-                // User wants to enable location
+
                 if (checkLocationPermission()) {
                     enableLocation();
                 } else {
                     requestLocationPermission();
-                    // We will handle enabling after permission granted
+
                 }
             } else {
-                // User wants to disable location
+
                 disableLocation();
             }
         });
@@ -96,7 +96,7 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-    // Enable location: get location and save to DB, update UI
+
     private void enableLocation() {
         fingertext.setText("Location Enabled");
         getstarted.setEnabled(true);
@@ -112,7 +112,7 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         }).addOnFailureListener(e -> Toast.makeText(skill.this, "Failed to get location: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // Disable location: remove from DB and update UI
+
     private void disableLocation() {
         fingertext.setText("Enable Location");
         getstarted.setEnabled(false);
@@ -124,12 +124,12 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    // Save user's current location in database
+
     private void saveUserLocationToDb(Location location) {
         dbHelper.saveUserLocation(currentUsername, location.getLatitude(), location.getLongitude());
     }
 
-    // Move map camera to user's location
+
     private void moveMapCamera(Location location) {
         if (googleMap != null) {
             LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -143,13 +143,13 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    // Load all users with location from DB and put markers on map except current user
+
     private void loadNearbyUsersOnMap() {
         if (googleMap == null) return;
 
         googleMap.clear();
 
-        // First show current user marker (if location is known)
+
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
                 LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -164,7 +164,7 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         ArrayList<UserLocation> userLocations = dbHelper.getAllUsersWithLocation();
 
         for (UserLocation ul : userLocations) {
-            // Don't show current user's marker twice
+
             if (!ul.getUsername().equals(currentUsername)) {
                 LatLng latLng = new LatLng(ul.getLatitude(), ul.getLongitude());
                 googleMap.addMarker(new MarkerOptions()
@@ -174,22 +174,22 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         }
     }
 
-    // Check if location permission is granted
+
     private boolean checkLocationPermission() {
         return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    // Request location permission
+
     private void requestLocationPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
     }
 
-    // Handle permission result
+
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                // Permission granted, enable location
+
                 if (locationToggle.isChecked()) {
                     enableLocation();
                 }
@@ -204,13 +204,13 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(@NonNull GoogleMap map) {
         this.googleMap = map;
-        // Optionally enable My Location button if permission granted
+
         if (checkLocationPermission()) {
             googleMap.setMyLocationEnabled(true);
         }
     }
 
-    // Lifecycle methods for mapView
+
     @Override
     protected void onResume() {
         super.onResume();

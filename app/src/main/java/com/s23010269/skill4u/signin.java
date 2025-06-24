@@ -47,13 +47,13 @@ public class signin extends AppCompatActivity {
             } else if (checkUserCredentials(userInput, passInput)) {
                 Toast.makeText(signin.this, "Login successful!", Toast.LENGTH_SHORT).show();
 
-                // Save username to prefs with consistent key "USERNAME"
+
                 prefs.edit().putString("USERNAME", userInput).apply();
 
                 String name = getUserName(userInput);
 
                 Intent homeIntent = new Intent(signin.this, home.class);
-                homeIntent.putExtra("USERNAME", userInput);  // use uppercase key
+                homeIntent.putExtra("USERNAME", userInput);
                 homeIntent.putExtra("NAME", name);
                 startActivity(homeIntent);
                 finish();

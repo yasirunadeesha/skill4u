@@ -58,10 +58,10 @@ public class menu extends AppCompatActivity {
                 startActivity(intent);
             } else {
                 Toast.makeText(menu.this, "User not logged in", Toast.LENGTH_SHORT).show();
-                // Optionally, redirect to signin screen here
+
             }
         });
 
-//        menuSkill.setOnClickListener(v -> startActivity(new Intent(menu.this, activity_skill.class)));
+
     }
 }

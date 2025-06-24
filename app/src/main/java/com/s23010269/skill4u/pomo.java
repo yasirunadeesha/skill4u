@@ -34,7 +34,7 @@ public class pomo extends AppCompatActivity {
     private boolean isCountdown = false;
     private boolean isRunning = false;
 
-    private long timeLeft = 25 * 60 * 1000; // 25 minutes in ms
+    private long timeLeft = 25 * 60 * 1000;
     private CountDownTimer countDownTimer;
     private Chronometer chronometer;
 
@@ -46,13 +46,13 @@ public class pomo extends AppCompatActivity {
         setContentView(R.layout.activity_pomo);
 
         timerText = findViewById(R.id.timer_text);
-        recordsText = findViewById(R.id.records); // corrected ID from your xml
+        recordsText = findViewById(R.id.records);
         startButton = findViewById(R.id.start_button);
         btnStopwatch = findViewById(R.id.btn_stopwatch);
         btnCountdown = findViewById(R.id.btn_countdown);
         toggleGroup = findViewById(R.id.toggle_group);
         openMenu = findViewById(R.id.openmenu);
-        rootLayout = findViewById(R.id.pomoLayout); // add android:id="@+id/pomoLayout" to root layout in XML!
+        rootLayout = findViewById(R.id.pomoLayout);
 
         dbHelper = new DatabaseHelper(this);
         chronometer = new Chronometer(this);
@@ -70,7 +70,7 @@ public class pomo extends AppCompatActivity {
                 timerText.setText("00:00");
             } else if (checkedId == R.id.btn_countdown) {
                 isCountdown = true;
-                timeLeft = 25 * 60 * 1000; // reset countdown
+                timeLeft = 25 * 60 * 1000;
                 timerText.setText("25:00");
             }
             updateBackgroundColors();
@@ -101,7 +101,6 @@ public class pomo extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Load records on start
         showAllRecords();
     }
 

@@ -23,7 +23,7 @@ public class profile extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        // View references
+
         getUsernameText = findViewById(R.id.get_username);
         getNameText = findViewById(R.id.get_name);
         fingerText = findViewById(R.id.fingertext);
@@ -31,12 +31,12 @@ public class profile extends AppCompatActivity {
         logoutBtn = findViewById(R.id.logout);
         fingerprintSwitch = findViewById(R.id.locationon);
 
-        // Retrieve data from Intent
+
         Intent intent = getIntent();
         username = intent.getStringExtra("USERNAME");
         name = intent.getStringExtra("NAME");
 
-        // Set user info
+
         if (username != null) {
             getUsernameText.setText("@" + username);
         }
@@ -44,17 +44,17 @@ public class profile extends AppCompatActivity {
             getNameText.setText(name);
         }
 
-        // Load fingerprint toggle state from SharedPreferences
+
         SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
         boolean isFingerprintEnabled = prefs.getBoolean("FINGERPRINT_" + username, false);
         fingerprintSwitch.setChecked(isFingerprintEnabled);
 
-        // Save toggle state
+
         fingerprintSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> {
             prefs.edit().putBoolean("FINGERPRINT_" + username, isChecked).apply();
         });
 
-        // Navigate to Home
+
         goToHomeBtn.setOnClickListener(v -> {
             Intent homeIntent = new Intent(profile.this, home.class);
             homeIntent.putExtra("USERNAME", username);
@@ -63,7 +63,7 @@ public class profile extends AppCompatActivity {
             finish();
         });
 
-        // Logout
+
         logoutBtn.setOnClickListener(v -> {
             new AlertDialog.Builder(profile.this)
                     .setTitle("Logout Confirmation")

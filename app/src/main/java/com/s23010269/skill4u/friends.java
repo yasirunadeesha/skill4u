@@ -21,9 +21,9 @@ public class friends extends AppCompatActivity {
     private ImageView openMenu;
     private String currentUsername;
 
-    private ArrayList<String> myFriends = new ArrayList<>();        // Load from DB ideally
-    private ArrayList<String> onlineUsers = new ArrayList<>();      // Load from DB
-    private ArrayList<String> incomingRequests = new ArrayList<>(); // Load from DB
+    private ArrayList<String> myFriends = new ArrayList<>();
+    private ArrayList<String> onlineUsers = new ArrayList<>();
+    private ArrayList<String> incomingRequests = new ArrayList<>();
 
     private DatabaseHelper dbHelper;
 
@@ -32,7 +32,7 @@ public class friends extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
 
-        // Get current username from intent (use uppercase "USERNAME" for consistency)
+
         currentUsername = getIntent().getStringExtra("USERNAME");
         if (currentUsername == null) currentUsername = "";
 
@@ -48,9 +48,9 @@ public class friends extends AppCompatActivity {
 
         setupTabListeners();
 
-        loadMyFriends();         // Load actual friends from DB or dummy
-        loadIncomingRequests();  // Load requests from DB or dummy
-        loadOnlineUsersFromDB(); // Load other users
+        loadMyFriends();
+        loadIncomingRequests();
+        loadOnlineUsersFromDB();
 
         showMyFriends();
         populateAllLists();
@@ -131,7 +131,7 @@ public class friends extends AppCompatActivity {
         selected.setTextColor(getResources().getColor(android.R.color.white));
         for (TextView other : others) {
             other.setBackgroundResource(0);
-            other.setTextColor(getResources().getColor(android.R.color.white)); // changed to black for contrast
+            other.setTextColor(getResources().getColor(android.R.color.white));
         }
     }
 
@@ -144,7 +144,7 @@ public class friends extends AppCompatActivity {
     private void fillContainer(LinearLayout container, ArrayList<String> items, String buttonLabel) {
         container.removeAllViews();
 
-        // Copy list to avoid ConcurrentModificationException during removal in listener
+
         for (String name : new ArrayList<>(items)) {
             LinearLayout row = new LinearLayout(this);
             row.setOrientation(LinearLayout.HORIZONTAL);
