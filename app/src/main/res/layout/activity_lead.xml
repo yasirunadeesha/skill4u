@@ -22,7 +22,7 @@
 
     <!-- Leaderboard Title -->
     <ListView
-        android:id="@+id/leaderboard_details"
+        android:id="@+id/friend_details"
         android:layout_width="376dp"
         android:layout_height="640dp"
         android:layout_margin="16dp"

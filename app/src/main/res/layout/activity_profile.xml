@@ -124,7 +124,7 @@
         tools:ignore="DuplicateIds" />
 
     <Switch
-        android:id="@+id/locationon"
+        android:id="@+id/fingerprint_on"
         android:layout_width="61dp"
         android:layout_height="36dp"
         android:backgroundTint="#00FF0A"

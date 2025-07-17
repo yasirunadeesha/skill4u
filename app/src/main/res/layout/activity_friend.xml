@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/friend_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bc_theme"
     android:orientation="vertical"
-    tools:context=".friends">
+    tools:context=".friend">
 
+    <!-- Top bar -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -28,18 +29,23 @@
             android:layout_centerInParent="true"
             android:text="Friends"
             android:textColor="#FFFFFF"
-            android:textSize="30dp" />
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
-        <ImageView
-            android:id="@+id/imageView11"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+        <TextView
+            android:id="@+id/username_display"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
-            android:src="@android:drawable/ic_menu_camera" />
+            android:layout_centerVertical="true"
+            android:text="Username"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="italic" />
     </RelativeLayout>
 
-    <!-- Navigation Tabs -->
+    <!-- Tabs -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -49,27 +55,27 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/comm_screen"
+            android:id="@+id/your_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/todorad"
             android:padding="8dp"
-            android:text="my friends"
+            android:text="My Friends"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/your_post_screen"
+            android:id="@+id/add_friends"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/todorad"
             android:padding="8dp"
-            android:text="Add friends"
+            android:text="Add Friends"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
 
         <TextView
@@ -79,18 +85,19 @@
             android:layout_marginHorizontal="8dp"
             android:background="@drawable/todorad"
             android:padding="8dp"
-            android:text="requests"
+            android:text="Requests"
             android:textColor="#FFFFFF"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold" />
     </LinearLayout>
 
-    <!-- Content Container -->
+    <!-- Content sections -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
+        <!-- My Friends -->
         <LinearLayout
             android:id="@+id/my_friends_container"
             android:layout_width="match_parent"
@@ -99,12 +106,13 @@
             android:visibility="visible">
 
             <ListView
-                android:id="@+id/leaderboard_details"
+                android:id="@+id/friend_details"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp" />
         </LinearLayout>
 
+        <!-- Add Friends -->
         <LinearLayout
             android:id="@+id/add_friends_container"
             android:layout_width="match_parent"
@@ -115,9 +123,11 @@
             <ListView
                 android:id="@+id/list_add_friends"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp" />
         </LinearLayout>
 
+        <!-- Friend Requests -->
         <LinearLayout
             android:id="@+id/friend_request_container"
             android:layout_width="match_parent"
@@ -128,7 +138,8 @@
             <ListView
                 android:id="@+id/list_requests"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp" />
         </LinearLayout>
     </FrameLayout>
 

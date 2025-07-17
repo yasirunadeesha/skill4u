@@ -12,56 +12,47 @@ import androidx.appcompat.app.AppCompatActivity;
 public class menu extends AppCompatActivity {
 
     ImageView backBtn;
-    TextView menuHome, menuTodo,menuAchievements, menuPomo, menuChallenges, menuComm, menuLeader, menuAna, menuFriends, menuSkill;
-
-    SharedPreferences prefs;
+    TextView menuHome, menuTodo, menuAchievements, menuPomo, menuChallenge, menuComm, menuLeader, menuAna, menuFriend, menuSkill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
 
-        prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
-        String loggedInUsername = prefs.getString("USERNAME", null);
 
         // Back button
         backBtn = findViewById(R.id.backbtn);
         backBtn.setOnClickListener(v -> finish());
 
+        // Menu item references
         menuHome = findViewById(R.id.menu_home);
-        menuTodo = findViewById(R.id.menu_todo);
+//        menuTodo = findViewById(R.id.menu_todo);
         menuPomo = findViewById(R.id.menu_pomo);
         menuAchievements = findViewById(R.id.menu_achievements);
-        menuChallenges = findViewById(R.id.menu_challanges);
+        menuChallenge = findViewById(R.id.menu_challange);
         menuComm = findViewById(R.id.menu_comm);
         menuLeader = findViewById(R.id.menu_leader);
         menuAna = findViewById(R.id.menu_ana);
-        menuFriends = findViewById(R.id.men_friends);
+        menuFriend = findViewById(R.id.menu_friend);
         menuSkill = findViewById(R.id.menu_skill);
 
-        menuHome.setOnClickListener(v -> startActivity(new Intent(menu.this, friends.class)));
+        // Home
         menuHome.setOnClickListener(v -> startActivity(new Intent(menu.this, home.class)));
+
+        // Pomo
         menuPomo.setOnClickListener(v -> startActivity(new Intent(menu.this, pomo.class)));
-        menuTodo.setOnClickListener(v -> startActivity(new Intent(menu.this, todo.class)));
+
+        menuFriend.setOnClickListener(v -> startActivity(new Intent(menu.this, friend.class)));
+
+        // Skill Buddy
         menuSkill.setOnClickListener(v -> startActivity(new Intent(menu.this, skill.class)));
-        menuChallenges.setOnClickListener(v -> startActivity(new Intent(menu.this, challenges.class)));
-        menuComm.setOnClickListener(v -> startActivity(new Intent(menu.this, community.class)));
-        menuLeader.setOnClickListener(v -> startActivity(new Intent(menu.this, lead.class)));
-        menuAna.setOnClickListener(v -> startActivity(new Intent(menu.this,  analytics.class)));
-        menuAna.setOnClickListener(v -> startActivity(new Intent(menu.this,  achievements.class)));
 
-
-        menuFriends.setOnClickListener(v -> {
-            if (loggedInUsername != null) {
-                Intent intent = new Intent(menu.this, friends.class);
-                intent.putExtra("USERNAME", loggedInUsername); // use uppercase key
-                startActivity(intent);
-            } else {
-                Toast.makeText(menu.this, "User not logged in", Toast.LENGTH_SHORT).show();
-
-            }
-        });
-
-
+        // You can uncomment and update these when needed:
+        // menuTodo.setOnClickListener(v -> startActivity(new Intent(menu.this, todo.class)));
+        // menuAchievements.setOnClickListener(v -> startActivity(new Intent(menu.this, achievements.class)));
+         menuChallenge.setOnClickListener(v -> startActivity(new Intent(menu.this, ChallengeActivity.class)));
+        // menuComm.setOnClickListener(v -> startActivity(new Intent(menu.this, community.class)));
+        // menuLeader.setOnClickListener(v -> startActivity(new Intent(menu.this, lead.class)));
+        // menuAna.setOnClickListener(v -> startActivity(new Intent(menu.this, analytics.class)));
     }
 }

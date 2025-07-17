@@ -1,44 +1,36 @@
 package com.s23010269.skill4u;
 
+import android.app.TimePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
-import android.os.SystemClock;
-import android.widget.Button;
-import android.widget.Chronometer;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
+import android.view.View;
+import android.widget.*;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import com.google.firebase.database.*;
 
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class pomo extends AppCompatActivity {
 
     private TextView timerText, recordsText;
-    private Button startButton;
-    private MaterialButton btnStopwatch, btnCountdown;
-    private MaterialButtonToggleGroup toggleGroup;
-    private ConstraintLayout rootLayout;
-    private ImageView openMenu;
+    private Button startPauseBtn;
+    private ImageView openmenu;
+    private FrameLayout timerCircle;
+    private LinearLayout controlButtonsLayout;
+    private LinearLayout pauseButtonsLayout;
 
-    private boolean isCountdown = false;
-    private boolean isRunning = false;
-
-    private long timeLeft = 25 * 60 * 1000;
     private CountDownTimer countDownTimer;
-    private Chronometer chronometer;
+    private long selectedMillis = 25 * 60 * 1000;
+    private boolean isRunning = false;
+    private boolean isPaused = false;
+    private long timeLeft = selectedMillis;
 
-    private DatabaseHelper dbHelper;
+    private String username;
+    private DatabaseReference focusRef;
+    private final List<String> focusHistory = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,156 +39,175 @@ public class pomo extends AppCompatActivity {
 
         timerText = findViewById(R.id.timer_text);
         recordsText = findViewById(R.id.records);
-        startButton = findViewById(R.id.start_button);
-        btnStopwatch = findViewById(R.id.btn_stopwatch);
-        btnCountdown = findViewById(R.id.btn_countdown);
-        toggleGroup = findViewById(R.id.toggle_group);
-        openMenu = findViewById(R.id.openmenu);
-        rootLayout = findViewById(R.id.pomoLayout);
+        startPauseBtn = findViewById(R.id.start_button);
+        timerCircle = findViewById(R.id.timer_circle);
+        openmenu = findViewById(R.id.openmenu);
+        controlButtonsLayout = findViewById(R.id.control_buttons);
 
-        dbHelper = new DatabaseHelper(this);
-        chronometer = new Chronometer(this);
-
-        // Set default selection to Stopwatch and UI setup
-        toggleGroup.check(R.id.btn_stopwatch);
-        isCountdown = false;
-        timerText.setText("00:00");
-        updateBackgroundColors();
-
-        toggleGroup.addOnButtonCheckedListener((group, checkedId, isChecked) -> {
-            if (!isChecked) return;
-            if (checkedId == R.id.btn_stopwatch) {
-                isCountdown = false;
-                timerText.setText("00:00");
-            } else if (checkedId == R.id.btn_countdown) {
-                isCountdown = true;
-                timeLeft = 25 * 60 * 1000;
-                timerText.setText("25:00");
-            }
-            updateBackgroundColors();
-            stopTimers();
-            isRunning = false;
-            startButton.setText("START");
-        });
-
-        startButton.setOnClickListener(view -> {
-            if (!isRunning) {
-                if (isCountdown) {
-                    startCountdown();
-                } else {
-                    startStopwatch();
-                }
-                isRunning = true;
-                startButton.setText("STOP");
-            } else {
-                stopTimers();
-                isRunning = false;
-                startButton.setText("START");
-                showAllRecords();
-            }
-        });
-
-        openMenu.setOnClickListener(view -> {
-            Intent intent = new Intent(pomo.this, menu.class);
-            startActivity(intent);
-        });
-
-        showAllRecords();
-    }
-
-    private void updateBackgroundColors() {
-        if (isCountdown) {
-            btnCountdown.setBackgroundTintList(getColorStateList(R.color.blue));
-            btnStopwatch.setBackgroundTintList(getColorStateList(R.color.dark_grey));
-        } else {
-            btnStopwatch.setBackgroundTintList(getColorStateList(R.color.blue));
-            btnCountdown.setBackgroundTintList(getColorStateList(R.color.dark_grey));
+        // Get username from intent or prefs
+        username = getIntent().getStringExtra("USERNAME");
+        if (username == null) {
+            SharedPreferences prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
+            username = prefs.getString("USERNAME", "GUEST");
         }
+
+        focusRef = FirebaseDatabase.getInstance().getReference("FocusRecords").child(username);
+        loadFocusRecords();
+
+        // Menu
+        openmenu.setOnClickListener(v -> {
+            startActivity(new Intent(pomo.this, menu.class));
+        });
+
+        // Time picker
+        timerText.setOnClickListener(v -> openTimePicker());
+
+        // Start/Pause
+        startPauseBtn.setOnClickListener(v -> {
+            if (!isRunning && !isPaused) {
+                startTimer(timeLeft);
+            } else if (isRunning) {
+                pauseTimer();
+            }
+        });
     }
 
-    private void startCountdown() {
-        countDownTimer = new CountDownTimer(timeLeft, 1000) {
+    private void openTimePicker() {
+        int mins = (int) (timeLeft / 60000);
+        new TimePickerDialog(this, (view, hourOfDay, minute) -> {
+            timeLeft = minute * 60 * 1000L;
+            selectedMillis = timeLeft;
+            updateTimerDisplay(timeLeft);
+        }, 0, mins, true).show();
+    }
+
+    private void startTimer(long millis) {
+        countDownTimer = new CountDownTimer(millis, 1000) {
             public void onTick(long millisUntilFinished) {
                 timeLeft = millisUntilFinished;
-                updateCountdownText();
+                updateTimerDisplay(timeLeft);
             }
+
             public void onFinish() {
-                timeLeft = 0;
-                updateCountdownText();
-                saveRecord("Pomodoro", "25:00");
-                Toast.makeText(pomo.this, "Countdown finished!", Toast.LENGTH_SHORT).show();
                 isRunning = false;
-                startButton.setText("START");
-                showAllRecords();
+                updateTimerDisplay(0);
+                recordFocusTime((int) (selectedMillis / 60000));
+                resetButtons();
             }
         }.start();
+
+        isRunning = true;
+        isPaused = false;
+        startPauseBtn.setText("PAUSE");
     }
 
-    private void updateCountdownText() {
-        int minutes = (int) (timeLeft / 1000) / 60;
-        int seconds = (int) (timeLeft / 1000) % 60;
-        timerText.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+    private void pauseTimer() {
+        countDownTimer.cancel();
+        isRunning = false;
+        isPaused = true;
+        showPauseOptions();
     }
 
-    private void startStopwatch() {
-        chronometer.setBase(SystemClock.elapsedRealtime());
-        chronometer.setOnChronometerTickListener(c -> {
-            long elapsedMillis = SystemClock.elapsedRealtime() - c.getBase();
-            int minutes = (int) (elapsedMillis / 1000) / 60;
-            int seconds = (int) (elapsedMillis / 1000) % 60;
-            timerText.setText(String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds));
+    private void showPauseOptions() {
+        // Hide Start button
+        startPauseBtn.setVisibility(View.GONE);
+
+        // Create pause button layout if not already created
+        if (pauseButtonsLayout == null) {
+            pauseButtonsLayout = new LinearLayout(this);
+            pauseButtonsLayout.setOrientation(LinearLayout.HORIZONTAL);
+            pauseButtonsLayout.setLayoutParams(new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            ));
+            pauseButtonsLayout.setGravity(View.TEXT_ALIGNMENT_CENTER);
+            pauseButtonsLayout.setPadding(10, 0, 10, 0);
+
+            Button continueBtn = new Button(this);
+            continueBtn.setText("CONTINUE");
+            continueBtn.setBackgroundTintList(getResources().getColorStateList(android.R.color.holo_green_light));
+            continueBtn.setTextColor(getResources().getColor(android.R.color.white));
+            continueBtn.setOnClickListener(v -> {
+                controlButtonsLayout.removeView(pauseButtonsLayout);
+                pauseButtonsLayout = null;
+                startPauseBtn.setVisibility(View.VISIBLE);
+                startTimer(timeLeft);
+            });
+
+            Button stopBtn = new Button(this);
+            stopBtn.setText("STOP");
+            stopBtn.setBackgroundTintList(getResources().getColorStateList(android.R.color.holo_red_dark));
+            stopBtn.setTextColor(getResources().getColor(android.R.color.white));
+            stopBtn.setOnClickListener(v -> {
+                recordFocusTime((int) ((selectedMillis - timeLeft) / 60000));
+                resetButtons();
+                updateTimerDisplay(selectedMillis);
+                controlButtonsLayout.removeView(pauseButtonsLayout);
+                pauseButtonsLayout = null;
+                startPauseBtn.setVisibility(View.VISIBLE);
+            });
+
+            pauseButtonsLayout.addView(continueBtn);
+            pauseButtonsLayout.addView(stopBtn);
+        }
+
+        controlButtonsLayout.addView(pauseButtonsLayout);
+    }
+
+    private void resetButtons() {
+        isRunning = false;
+        isPaused = false;
+        timeLeft = selectedMillis;
+        startPauseBtn.setText("START");
+    }
+
+    private void updateTimerDisplay(long millis) {
+        int minutes = (int) (millis / 60000);
+        int seconds = (int) ((millis / 1000) % 60);
+        timerText.setText(String.format(Locale.US, "%02d:%02d", minutes, seconds));
+    }
+
+    private void recordFocusTime(int minutes) {
+        String record = minutes + " minutes";
+        String key = focusRef.push().getKey();
+        if (key != null) {
+            focusRef.child(key).setValue(record);
+            focusHistory.add(record);
+            updateRecordsUI();
+        }
+    }
+
+    private void loadFocusRecords() {
+        focusRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                focusHistory.clear();
+                for (DataSnapshot snap : snapshot.getChildren()) {
+                    String record = snap.getValue(String.class);
+                    if (record != null) focusHistory.add(record);
+                }
+                updateRecordsUI();
+            }
+
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(pomo.this, "Error loading records", Toast.LENGTH_SHORT).show();
+            }
         });
-        chronometer.start();
     }
 
-    private void stopTimers() {
-        if (chronometer != null) {
-            chronometer.stop();
-            if (!isCountdown) {
-                long elapsedMillis = SystemClock.elapsedRealtime() - chronometer.getBase();
-                int minutes = (int) (elapsedMillis / 1000) / 60;
-                int seconds = (int) (elapsedMillis / 1000) % 60;
-                String duration = String.format(Locale.getDefault(), "%02d:%02d", minutes, seconds);
-                saveRecord("Stopwatch", duration);
+    private void updateRecordsUI() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < focusHistory.size(); i++) {
+            String record = focusHistory.get(i);
+            sb.append(i + 1).append(". ").append(record).append("    ❌\n");
+        }
+        recordsText.setText(sb.toString());
+
+        recordsText.setOnClickListener(v -> {
+            if (!focusHistory.isEmpty()) {
+                focusHistory.remove(focusHistory.size() - 1);
+                updateRecordsUI();
+                focusRef.setValue(focusHistory);
             }
-        }
-        if (countDownTimer != null) {
-            countDownTimer.cancel();
-        }
-    }
-
-    private void saveRecord(String type, String duration) {
-        boolean success = dbHelper.insertTimeRecord(type, duration);
-        if (!success) {
-            Toast.makeText(this, "Failed to save record.", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private void showAllRecords() {
-        List<String> records = new ArrayList<>();
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        Cursor cursor = db.rawQuery("SELECT " + DatabaseHelper.TIME_RECORDS_COL_TYPE + ", " +
-                DatabaseHelper.TIME_RECORDS_COL_DURATION + " FROM " + DatabaseHelper.TIME_RECORDS_TABLE +
-                " ORDER BY " + DatabaseHelper.TIME_RECORDS_COL_ID + " DESC", null);
-
-        if (cursor.moveToFirst()) {
-            do {
-                String type = cursor.getString(0);
-                String duration = cursor.getString(1);
-                records.add(type + " - " + duration);
-            } while (cursor.moveToNext());
-        }
-        cursor.close();
-        db.close();
-
-        if (records.isEmpty()) {
-            recordsText.setText("No Recent Records");
-        } else {
-            StringBuilder sb = new StringBuilder();
-            for (String r : records) {
-                sb.append(r).append("\n");
-            }
-            recordsText.setText(sb.toString().trim());
-        }
+        });
     }
 }

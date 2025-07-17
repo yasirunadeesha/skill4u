@@ -75,27 +75,27 @@
                     android:textSize="25dp" />
             </LinearLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:background="?android:attr/selectableItemBackground">
+<!--            <LinearLayout-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="16dp"-->
+<!--                android:background="?android:attr/selectableItemBackground">-->
 
-                <ImageView
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="Todo List"
-                    android:src="@drawable/checklist" />
+<!--                <ImageView-->
+<!--                    android:layout_width="30dp"-->
+<!--                    android:layout_height="30dp"-->
+<!--                    android:contentDescription="Todo List"-->
+<!--                    android:src="@drawable/checklist" />-->
 
-                <TextView
-                    android:id="@+id/menu_todo"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:text="Journal"
-                    android:textColor="#FFFFFF"
-                    android:textSize="25dp" />
-            </LinearLayout>
+<!--                <TextView-->
+<!--                    android:id="@+id/menu_todo"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="16dp"-->
+<!--                    android:text="Journal"-->
+<!--                    android:textColor="#FFFFFF"-->
+<!--                    android:textSize="25dp" />-->
+<!--            </LinearLayout>-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -132,7 +132,7 @@
                     android:src="@drawable/award" />
 
                 <TextView
-                    android:id="@+id/menu_challanges"
+                    android:id="@+id/menu_challange"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
@@ -221,7 +221,7 @@
                     android:src="@drawable/friends111" />
 
                 <TextView
-                    android:id="@+id/men_friends"
+                    android:id="@+id/menu_friend"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"

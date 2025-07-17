@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "991373547287",
+    "project_id": "eei4369project",
+    "storage_bucket": "eei4369project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:991373547287:android:a2d140ba3b598b15db0952",
+        "android_client_info": {
+          "package_name": "com.s23010269.skill4u"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuDwCdyvhsb-QM2v-l1eFRQ_d3hP9WfaA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

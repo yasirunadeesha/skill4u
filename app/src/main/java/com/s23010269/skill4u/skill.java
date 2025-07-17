@@ -5,10 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.widget.*;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
@@ -17,15 +14,9 @@ import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
-import java.util.ArrayList;
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
+import com.google.firebase.database.*;
 
 public class skill extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -35,49 +26,50 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
     private TextView fingertext;
     private MapView mapView;
     private Button getstarted;
+    private ImageView openMenu;
 
     private GoogleMap googleMap;
     private FusedLocationProviderClient fusedLocationClient;
 
-    private DatabaseHelper dbHelper;
-    private ImageView openMenu;
     private String currentUsername;
+    private DatabaseReference locationsRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_skill);
 
-        openMenu = findViewById(R.id.openmenu);
+        // UI
         locationToggle = findViewById(R.id.locationToggle);
-        fingertext = findViewById(R.id.fingertext);
-        mapView = findViewById(R.id.mapView);
-        getstarted = findViewById(R.id.getstarted);
+        fingertext     = findViewById(R.id.fingertext);
+        mapView        = findViewById(R.id.mapView);
+        getstarted     = findViewById(R.id.getstarted);
+        openMenu       = findViewById(R.id.openmenu);
 
-        dbHelper = new DatabaseHelper(this);
+        // Firebase
+        locationsRef = FirebaseDatabase.getInstance().getReference("Locations");
+
+        // Username
+        currentUsername = getIntent().getStringExtra("USERNAME");
+        if (currentUsername == null) currentUsername = "guest";
+
+        // Location provider
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-
-        currentUsername = getIntent().getStringExtra("USERNAME");
-        if (currentUsername == null) currentUsername = ""; // fallback
-
+        // Map init
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
-
 
         getstarted.setEnabled(false);
 
         locationToggle.setOnCheckedChangeListener((buttonView, isChecked) -> {
             if (isChecked) {
-
                 if (checkLocationPermission()) {
                     enableLocation();
                 } else {
                     requestLocationPermission();
-
                 }
             } else {
-
                 disableLocation();
             }
         });
@@ -96,147 +88,123 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         });
     }
 
-
     private void enableLocation() {
         fingertext.setText("Location Enabled");
         getstarted.setEnabled(true);
 
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
-                saveUserLocationToDb(location);
+                saveUserLocationToFirebase(location);
                 moveMapCamera(location);
                 loadNearbyUsersOnMap();
             } else {
-                Toast.makeText(skill.this, "Unable to get location. Make sure GPS is enabled.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Unable to get location. Ensure GPS is on.", Toast.LENGTH_SHORT).show();
             }
-        }).addOnFailureListener(e -> Toast.makeText(skill.this, "Failed to get location: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }).addOnFailureListener(e ->
+                Toast.makeText(this, "Location failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+        );
     }
-
 
     private void disableLocation() {
         fingertext.setText("Enable Location");
         getstarted.setEnabled(false);
 
-        dbHelper.disableLocation(currentUsername);
+        locationsRef.child(currentUsername).removeValue();
 
-        if (googleMap != null) {
-            googleMap.clear();
-        }
+        if (googleMap != null) googleMap.clear();
     }
 
-
-    private void saveUserLocationToDb(Location location) {
-        dbHelper.saveUserLocation(currentUsername, location.getLatitude(), location.getLongitude());
+    private void saveUserLocationToFirebase(Location location) {
+        UserLocation userLocation = new UserLocation(currentUsername, location.getLatitude(), location.getLongitude());
+        locationsRef.child(currentUsername).setValue(userLocation);
     }
-
 
     private void moveMapCamera(Location location) {
         if (googleMap != null) {
-            LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 14f));
+            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 14f));
             googleMap.clear();
-            // Add marker for current user
             googleMap.addMarker(new MarkerOptions()
-                    .position(userLatLng)
+                    .position(latLng)
                     .title("You")
                     .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
         }
     }
-
 
     private void loadNearbyUsersOnMap() {
         if (googleMap == null) return;
 
         googleMap.clear();
 
-
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                LatLng userLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        fusedLocationClient.getLastLocation().addOnSuccessListener(currentLoc -> {
+            if (currentLoc != null) {
+                LatLng myLatLng = new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude());
                 googleMap.addMarker(new MarkerOptions()
-                        .position(userLatLng)
+                        .position(myLatLng)
                         .title("You")
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)));
-                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng, 14f));
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(myLatLng, 14f));
             }
+
+            locationsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for (DataSnapshot child : snapshot.getChildren()) {
+                        UserLocation ul = child.getValue(UserLocation.class);
+                        if (ul != null && !ul.getUsername().equals(currentUsername)) {
+                            LatLng latLng = new LatLng(ul.getLatitude(), ul.getLongitude());
+                            googleMap.addMarker(new MarkerOptions()
+                                    .position(latLng)
+                                    .title(ul.getUsername()));
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                    Toast.makeText(skill.this, "Failed to load users", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
-
-        ArrayList<UserLocation> userLocations = dbHelper.getAllUsersWithLocation();
-
-        for (UserLocation ul : userLocations) {
-
-            if (!ul.getUsername().equals(currentUsername)) {
-                LatLng latLng = new LatLng(ul.getLatitude(), ul.getLongitude());
-                googleMap.addMarker(new MarkerOptions()
-                        .position(latLng)
-                        .title(ul.getUsername()));
-            }
-        }
     }
-
 
     private boolean checkLocationPermission() {
-        return ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
+        return ActivityCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
-
 
     private void requestLocationPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                LOCATION_PERMISSION_REQUEST_CODE);
     }
 
-
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                if (locationToggle.isChecked()) {
-                    enableLocation();
-                }
+    public void onRequestPermissionsResult(int code, @NonNull String[] permissions, @NonNull int[] results) {
+        if (code == LOCATION_PERMISSION_REQUEST_CODE) {
+            if (results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
+                if (locationToggle.isChecked()) enableLocation();
             } else {
-                Toast.makeText(this, "Location permission is required to use this feature", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show();
                 locationToggle.setChecked(false);
             }
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(code, permissions, results);
     }
 
-    @Override
-    public void onMapReady(@NonNull GoogleMap map) {
-        this.googleMap = map;
-
+    @Override public void onMapReady(@NonNull GoogleMap map) {
+        googleMap = map;
         if (checkLocationPermission()) {
             googleMap.setMyLocationEnabled(true);
         }
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mapView.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mapView.onPause();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mapView.onDestroy();
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-        mapView.onLowMemory();
-    }
-
-    @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    // Map lifecycle
+    @Override protected void onResume() { super.onResume(); mapView.onResume(); }
+    @Override protected void onPause() { super.onPause(); mapView.onPause(); }
+    @Override protected void onDestroy() { super.onDestroy(); mapView.onDestroy(); }
+    @Override public void onLowMemory() { super.onLowMemory(); mapView.onLowMemory(); }
+    @Override protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }

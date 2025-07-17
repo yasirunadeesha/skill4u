@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="sw_notify" type="id" />
+    <item name="btn_save" type="id" />
+    <item name="tv_time" type="id" />
+    <item name="tv_date" type="id" />
+    <item name="tv_category" type="id" />
+    <item name="et_description" type="id" />
+    <item name="et_title" type="id" />
+    <item name="btn_close" type="id" />
+    <item name="dialog_title" type="id" />
+    <item name="profile_icon" type="id" />
+    <item name="user_name" type="id" />
+    <item name="action_button" type="id" />
+    <item name="menu_dots" type="id" />
+    <item name="request_button_row" type="id" />
+    <item name="accept_button" type="id" />
+    <item name="decline_button" type="id" />
+    <item name="profileText" type="id" />
+    <item name="menu_friends" type="id" />
+    <item name="menu_friend" type="id" />
+</resources>

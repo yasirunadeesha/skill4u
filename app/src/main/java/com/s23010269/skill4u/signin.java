@@ -2,143 +2,179 @@ package com.s23010269.skill4u;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.text.TextUtils;
+import android.widget.*;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 
+import com.google.firebase.database.*;
+
 import java.util.concurrent.Executor;
 
 public class signin extends AppCompatActivity {
 
-    EditText username, password;
-    Button signinBtn;
-    TextView register, fingerprint;
-    DatabaseHelper dbHelper;
-
+    EditText usernameField, passwordField;
+    Button signinButton;
+    TextView registerText, fingerprintText;
+    DatabaseReference databaseRef;
     SharedPreferences prefs;
+
+    Executor executor;
+    BiometricPrompt biometricPrompt;
+    BiometricPrompt.PromptInfo promptInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
 
-        username = findViewById(R.id.username);
-        password = findViewById(R.id.password);
-        signinBtn = findViewById(R.id.signin);
-        register = findViewById(R.id.register);
-        fingerprint = findViewById(R.id.fingerprint);
-        dbHelper = new DatabaseHelper(this);
+        usernameField = findViewById(R.id.username);
+        passwordField = findViewById(R.id.password);
+        signinButton = findViewById(R.id.signin);
+        registerText = findViewById(R.id.register);
+        fingerprintText = findViewById(R.id.fingerprint);
+
+        databaseRef = FirebaseDatabase.getInstance().getReference("Users");
         prefs = getSharedPreferences("MyAppPrefs", MODE_PRIVATE);
 
-        signinBtn.setOnClickListener(v -> {
-            String userInput = username.getText().toString().trim();
-            String passInput = password.getText().toString().trim();
+        signinButton.setOnClickListener(view -> loginWithPassword());
+        fingerprintText.setOnClickListener(view -> loginWithFingerprint());
 
-            if (userInput.isEmpty() || passInput.isEmpty()) {
-                Toast.makeText(signin.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-            } else if (checkUserCredentials(userInput, passInput)) {
-                Toast.makeText(signin.this, "Login successful!", Toast.LENGTH_SHORT).show();
-
-
-                prefs.edit().putString("USERNAME", userInput).apply();
-
-                String name = getUserName(userInput);
-
-                Intent homeIntent = new Intent(signin.this, home.class);
-                homeIntent.putExtra("USERNAME", userInput);
-                homeIntent.putExtra("NAME", name);
-                startActivity(homeIntent);
-                finish();
-            } else {
-                Toast.makeText(signin.this, "Invalid username or password", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        register.setOnClickListener(v -> startActivity(new Intent(signin.this, signup.class)));
-
-        fingerprint.setOnClickListener(v -> {
-            String savedUsername = prefs.getString("USERNAME", null);
-            if (savedUsername == null) {
-                Toast.makeText(this, "Please log in at least once before using fingerprint", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            boolean enabled = prefs.getBoolean("FINGERPRINT_" + savedUsername, false);
-            if (enabled && isBiometricAvailable()) {
-                showBiometricPrompt(savedUsername);
-            } else {
-                Toast.makeText(this, "Fingerprint login is not enabled or supported", Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
-    private boolean checkUserCredentials(String username, String password) {
-        Cursor cursor = dbHelper.getReadableDatabase().rawQuery(
-                "SELECT * FROM " + DatabaseHelper.USER_TABLE + " WHERE username = ? AND password = ?",
-                new String[]{username, password}
+        registerText.setOnClickListener(view ->
+                startActivity(new Intent(signin.this, signup.class))
         );
-        boolean valid = cursor.getCount() > 0;
-        cursor.close();
-        return valid;
-    }
 
-    private String getUserName(String username) {
-        Cursor cursor = dbHelper.getReadableDatabase().rawQuery(
-                "SELECT name FROM " + DatabaseHelper.USER_TABLE + " WHERE username = ?",
-                new String[]{username}
-        );
-        String name = "";
-        if (cursor.moveToFirst()) {
-            name = cursor.getString(0);
-        }
-        cursor.close();
-        return name;
-    }
-
-    private boolean isBiometricAvailable() {
-        BiometricManager biometricManager = BiometricManager.from(this);
-        return biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                == BiometricManager.BIOMETRIC_SUCCESS;
-    }
-
-    private void showBiometricPrompt(String savedUsername) {
-        Executor executor = ContextCompat.getMainExecutor(this);
-        BiometricPrompt biometricPrompt = new BiometricPrompt(signin.this, executor, new BiometricPrompt.AuthenticationCallback() {
+        // Setup biometric prompt
+        executor = ContextCompat.getMainExecutor(this);
+        biometricPrompt = new BiometricPrompt(signin.this, executor, new BiometricPrompt.AuthenticationCallback() {
             @Override
-            public void onAuthenticationSucceeded(BiometricPrompt.AuthenticationResult result) {
-                super.onAuthenticationSucceeded(result);
-                Toast.makeText(signin.this, "Fingerprint login successful!", Toast.LENGTH_SHORT).show();
+            public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
+                String username = usernameField.getText().toString().trim();
+                if (TextUtils.isEmpty(username)) {
+                    Toast.makeText(signin.this, "Enter username first", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-                String name = getUserName(savedUsername);
+                loginUser(username); // Directly log in after successful fingerprint
+            }
 
-                Intent homeIntent = new Intent(signin.this, home.class);
-                homeIntent.putExtra("USERNAME", savedUsername);  // consistent key
-                homeIntent.putExtra("NAME", name);
-                startActivity(homeIntent);
-                finish();
+            @Override
+            public void onAuthenticationError(int errorCode, @NonNull CharSequence errString) {
+                Toast.makeText(signin.this, "Fingerprint error: " + errString, Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onAuthenticationFailed() {
-                super.onAuthenticationFailed();
-                Toast.makeText(signin.this, "Fingerprint authentication failed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(signin.this, "Fingerprint not recognized", Toast.LENGTH_SHORT).show();
             }
         });
 
-        BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
+        promptInfo = new BiometricPrompt.PromptInfo.Builder()
                 .setTitle("Fingerprint Login")
-                .setSubtitle("Use your fingerprint to sign in")
+                .setSubtitle("Authenticate to log in")
                 .setNegativeButtonText("Cancel")
                 .build();
+    }
 
-        biometricPrompt.authenticate(promptInfo);
+    private void loginWithPassword() {
+        final String username = usernameField.getText().toString().trim();
+        final String password = passwordField.getText().toString().trim();
+
+        if (TextUtils.isEmpty(username) || TextUtils.isEmpty(password)) {
+            Toast.makeText(signin.this, "Please enter both username and password", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        databaseRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    String storedPassword = snapshot.child("password").getValue(String.class);
+                    if (storedPassword != null && storedPassword.equals(password)) {
+                        saveLoginAndGoHome(username);
+                    } else {
+                        Toast.makeText(signin.this, "Incorrect password", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(signin.this, "Username not found", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(signin.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void loginWithFingerprint() {
+        final String username = usernameField.getText().toString().trim();
+
+        if (TextUtils.isEmpty(username)) {
+            Toast.makeText(this, "Enter your username first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        BiometricManager biometricManager = BiometricManager.from(this);
+        if (biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG)
+                != BiometricManager.BIOMETRIC_SUCCESS) {
+            Toast.makeText(this, "Fingerprint login not available on this device", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Check if fingerprint login is enabled for this user
+        databaseRef.child(username).child("fingerprintEnabled")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Boolean isEnabled = snapshot.getValue(Boolean.class);
+                        if (isEnabled != null && isEnabled) {
+                            biometricPrompt.authenticate(promptInfo);
+                        } else {
+                            Toast.makeText(signin.this, "Fingerprint login not enabled for this user", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(signin.this, "Error checking fingerprint status", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void loginUser(String username) {
+        databaseRef.child(username).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists()) {
+                    saveLoginAndGoHome(username);
+                } else {
+                    Toast.makeText(signin.this, "No user found for fingerprint login", Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(signin.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void saveLoginAndGoHome(String username) {
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("USERNAME", username);
+        editor.putString("USERID", username); // Username is treated as ID
+        editor.apply();
+
+        Toast.makeText(signin.this, "Login successful", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(signin.this, home.class);
+        intent.putExtra("USERNAME", username);
+        startActivity(intent);
+        finish();
     }
 }

@@ -2,64 +2,88 @@ package com.s23010269.skill4u;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
+import android.text.TextUtils;
+import android.view.View;
+import android.widget.*;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.firebase.database.*;
 
 public class signup extends AppCompatActivity {
 
-    private EditText username, name, email, password, confirmpass;
-    private Button signupButton;
-    private DatabaseHelper dbHelper;
+    EditText username, name, email, password, confirmpass;
+    Button signup;
+    DatabaseReference databaseRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
+        // ✅ Test Firebase connection
+        FirebaseDatabase.getInstance().getReference("DebugTest").setValue("Connected");
+
+        // Initialize Views
         username = findViewById(R.id.username);
         name = findViewById(R.id.name);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
         confirmpass = findViewById(R.id.confirmpass);
-        signupButton = findViewById(R.id.signup);
+        signup = findViewById(R.id.signup);
 
-        dbHelper = new DatabaseHelper(this);
+        databaseRef = FirebaseDatabase.getInstance().getReference("Users");
 
-        signupButton.setOnClickListener(view -> {
-            String user = username.getText().toString().trim();
-            String fullName = name.getText().toString().trim();
-            String userEmail = email.getText().toString().trim();
-            String pass = password.getText().toString().trim();
-            String confirmPass = confirmpass.getText().toString().trim();
+        signup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final String user = username.getText().toString().trim();
+                final String fullName = name.getText().toString().trim();
+                final String userEmail = email.getText().toString().trim();
+                final String userPass = password.getText().toString().trim();
+                final String confirmPass = confirmpass.getText().toString().trim();
 
-            if (user.isEmpty() || fullName.isEmpty() || userEmail.isEmpty() || pass.isEmpty() || confirmPass.isEmpty()) {
-                Toast.makeText(signup.this, "Please fill in all fields", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                // Check if all fields are filled
+                if (TextUtils.isEmpty(user) || TextUtils.isEmpty(fullName) || TextUtils.isEmpty(userEmail) ||
+                        TextUtils.isEmpty(userPass) || TextUtils.isEmpty(confirmPass)) {
+                    Toast.makeText(signup.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (!pass.equals(confirmPass)) {
-                Toast.makeText(signup.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                // Check if passwords match
+                if (!userPass.equals(confirmPass)) {
+                    Toast.makeText(signup.this, "Passwords do not match", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-            if (dbHelper.isUsernameExists(user)) {
-                Toast.makeText(signup.this, "Username already taken. Try another one.", Toast.LENGTH_SHORT).show();
-                return;
-            }
+                // Check if username already exists
+                databaseRef.child(user).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Toast.makeText(signup.this, "Username already exists, choose another", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // Save new user
+                            User newUser = new User(user, fullName, userEmail, userPass);
+                            databaseRef.child(user).setValue(newUser).addOnCompleteListener(task -> {
+                                if (task.isSuccessful()) {
+                                    Toast.makeText(signup.this, "Signup successful!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(signup.this, signin.class);
+                                    startActivity(intent);
+                                    finish(); // Optional
+                                } else {
+                                    Toast.makeText(signup.this, "Signup failed. Try again.", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    }
 
-            boolean insertSuccess = dbHelper.insertUser(user, fullName, userEmail, pass);
-            if (insertSuccess) {
-                Toast.makeText(signup.this, "Registration Successful!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(signup.this, signin.class));
-                finish();
-            } else {
-                Toast.makeText(signup.this, "Registration Failed. Try again.", Toast.LENGTH_SHORT).show();
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(signup.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
-
-
 }
