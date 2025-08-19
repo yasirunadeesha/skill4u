@@ -56,6 +56,12 @@ public class signup extends AppCompatActivity {
                     return;
                 }
 
+                // Check if password is at least 6 characters
+                if (userPass.length() < 6) {
+                    Toast.makeText(signup.this, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 // Check if username already exists
                 databaseRef.child(user).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
