@@ -41,10 +41,10 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
 
         // UI
         locationToggle = findViewById(R.id.locationToggle);
-        fingertext     = findViewById(R.id.fingertext);
-        mapView        = findViewById(R.id.mapView);
-        getstarted     = findViewById(R.id.getstarted);
-        openMenu       = findViewById(R.id.openmenu);
+        fingertext = findViewById(R.id.fingertext);
+        mapView = findViewById(R.id.mapView);
+        getstarted = findViewById(R.id.finduser);
+        openMenu = findViewById(R.id.openmenu);
 
         // Firebase
         locationsRef = FirebaseDatabase.getInstance().getReference("Locations");
@@ -92,6 +92,16 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
         fingertext.setText("Location Enabled");
         getstarted.setEnabled(true);
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
             if (location != null) {
                 saveUserLocationToFirebase(location);
@@ -136,6 +146,16 @@ public class skill extends AppCompatActivity implements OnMapReadyCallback {
 
         googleMap.clear();
 
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
         fusedLocationClient.getLastLocation().addOnSuccessListener(currentLoc -> {
             if (currentLoc != null) {
                 LatLng myLatLng = new LatLng(currentLoc.getLatitude(), currentLoc.getLongitude());

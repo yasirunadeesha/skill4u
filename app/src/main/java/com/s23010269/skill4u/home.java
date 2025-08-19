@@ -110,6 +110,13 @@ public class home extends AppCompatActivity {
             i.putExtra("USERNAME", currentUsername);
             startActivity(i);
         });
+
+        openMenu.setOnClickListener(v -> {
+            Intent i = new Intent(this, analytics.class);
+            i.putExtra("USERNAME", currentUsername); // ✅ pass logged user
+            startActivity(i);
+        });
+
     }
 
     /** loads from Firebase, deletes expired, updates RecyclerView */

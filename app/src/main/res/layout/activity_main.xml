@@ -22,7 +22,7 @@
         android:id="@+id/getstarted"
         android:layout_width="343dp"
         android:layout_height="60dp"
-        android:backgroundTint="#2196F3"
+        android:backgroundTint="#1C6EA4"
         android:text="Get Started"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -27,7 +27,7 @@ public class CategoryPickerDialogFragment extends DialogFragment {
     public CategoryPickerDialogFragment(OnCategorySelectedListener listener) {
         this.listener = listener;
         setStyle(DialogFragment.STYLE_NORMAL,
-                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert);
+                android.R.style.Theme_DeviceDefault_Light_Dialog_Alert); // dialog style
     }
 
     @Nullable
@@ -35,11 +35,12 @@ public class CategoryPickerDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_select_category, container, false);
+        View view = inflater.inflate(R.layout.dialog_select_category, container, false); // inflate layout
 
-        RecyclerView rv = view.findViewById(R.id.rv_categories);
-        rv.setLayoutManager(new GridLayoutManager(getContext(), 3)); // 3 columns
+        RecyclerView rv = view.findViewById(R.id.rv_categories); // find RecyclerView
+        rv.setLayoutManager(new GridLayoutManager(getContext(), 3)); // 3 column grid layout
 
+        // create category list
         List<CategoryItem> categories = Arrays.asList(
                 new CategoryItem("Art", R.drawable.cat_art),
                 new CategoryItem("Meditation", R.drawable.cat_meditation),
@@ -53,39 +54,40 @@ public class CategoryPickerDialogFragment extends DialogFragment {
                 new CategoryItem("Other", R.drawable.cat_other)
         );
 
+        // set adapter with click callback
         CategoryAdapter adapter = new CategoryAdapter(categories, categoryName -> {
-            listener.onCategorySelected(categoryName);
-            dismiss();
+            listener.onCategorySelected(categoryName); // notify listener
+            dismiss(); // close dialog
         });
 
-        rv.setAdapter(adapter);
+        rv.setAdapter(adapter); // attach adapter
 
-        // Close button
+        // Close button listener
         view.findViewById(R.id.btn_close_categories).setOnClickListener(v -> dismiss());
 
-        return view;
+        return view; // return inflated view
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Dialog d = getDialog();
+        Dialog d = getDialog(); // get dialog
         if (d != null && d.getWindow() != null) {
             d.getWindow().setLayout(
-                    WindowManager.LayoutParams.MATCH_PARENT,
-                    WindowManager.LayoutParams.WRAP_CONTENT
+                    WindowManager.LayoutParams.MATCH_PARENT, // full width
+                    WindowManager.LayoutParams.WRAP_CONTENT // wrap content height
             );
         }
     }
 
-    // Data holder class for each category
+    // Class representing a category item
     public static class CategoryItem {
-        public final String name;
-        public final int iconRes;
+        public final String name; // category name
+        public final int iconRes; // drawable resource for icon
 
         public CategoryItem(String name, int iconRes) {
-            this.name = name;
-            this.iconRes = iconRes;
+            this.name = name; // set name
+            this.iconRes = iconRes; // set icon
         }
     }
 }

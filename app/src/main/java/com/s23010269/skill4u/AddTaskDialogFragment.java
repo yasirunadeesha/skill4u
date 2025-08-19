@@ -18,13 +18,13 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Calendar;
 
+
 public class AddTaskDialogFragment extends DialogFragment {
 
-    private static final String ARG_USERNAME = "arg_username";
+    private static final String ARG_USERNAME = "arg_username"; // Key for passing username
     private String username;
-    private Runnable onSavedCallback;
+    private Runnable onSavedCallback; // Callback after saving task
 
-    // Factory constructor
     public static AddTaskDialogFragment newInstance(String username, Runnable onSaved) {
         AddTaskDialogFragment frag = new AddTaskDialogFragment();
         Bundle args = new Bundle();
@@ -42,7 +42,7 @@ public class AddTaskDialogFragment extends DialogFragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            username = getArguments().getString(ARG_USERNAME);
+            username = getArguments().getString(ARG_USERNAME); // Retrieve username
         }
         setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
     }
@@ -52,8 +52,10 @@ public class AddTaskDialogFragment extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.dialog_add_task, container, false);
 
+        // UI elements
         EditText etTitle       = view.findViewById(R.id.et_title);
         EditText etDesc        = view.findViewById(R.id.et_description);
         TextView tvCategory    = view.findViewById(R.id.tv_category);
@@ -63,7 +65,7 @@ public class AddTaskDialogFragment extends DialogFragment {
         View   btnClose        = view.findViewById(R.id.btn_close);
         View   btnSave         = view.findViewById(R.id.btn_save);
 
-        final String[] selectedCategory = {null};
+        final String[] selectedCategory = {null}; // Store selected category
 
         // Category picker
         tvCategory.setOnClickListener(v -> {
@@ -101,10 +103,10 @@ public class AddTaskDialogFragment extends DialogFragment {
                     true).show();
         });
 
-        // Close button
+        // Close button dismisses dialog
         btnClose.setOnClickListener(v -> dismiss());
 
-        // Save task
+        // Save task button
         btnSave.setOnClickListener(v -> {
             String title = etTitle.getText().toString().trim();
             String desc = etDesc.getText().toString().trim();
@@ -113,19 +115,23 @@ public class AddTaskDialogFragment extends DialogFragment {
             String time = tvTime.getText().toString().trim();
             boolean notify = swNotify.isChecked();
 
+            // Check required fields
             if (title.isEmpty() || cat == null || date.isEmpty() || time.isEmpty()) {
                 Toast.makeText(requireContext(), "Please fill all required fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
+            // Generate unique key for new task
             String key = FirebaseDatabase.getInstance()
                     .getReference("Schedules")
                     .child(username)
                     .push()
                     .getKey();
 
+            // Create Task object
             Task task = new Task(key, title, desc, cat, date, time, notify, username);
 
+            // Save task to Firebase
             FirebaseDatabase.getInstance()
                     .getReference("Schedules")
                     .child(username)
@@ -133,8 +139,8 @@ public class AddTaskDialogFragment extends DialogFragment {
                     .setValue(task)
                     .addOnSuccessListener(aVoid -> {
                         Toast.makeText(requireContext(), "Task saved", Toast.LENGTH_SHORT).show();
-                        dismiss();
-                        if (onSavedCallback != null) onSavedCallback.run();
+                        dismiss(); // Close dialog
+                        if (onSavedCallback != null) onSavedCallback.run(); // Run callback
                     })
                     .addOnFailureListener(e ->
                             Toast.makeText(requireContext(), "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
@@ -149,6 +155,7 @@ public class AddTaskDialogFragment extends DialogFragment {
         super.onStart();
         Dialog d = getDialog();
         if (d != null && d.getWindow() != null) {
+            // Make dialog full screen
             d.getWindow().setLayout(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT

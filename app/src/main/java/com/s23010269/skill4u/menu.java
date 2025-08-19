@@ -49,10 +49,10 @@ public class menu extends AppCompatActivity {
 
         // You can uncomment and update these when needed:
         // menuTodo.setOnClickListener(v -> startActivity(new Intent(menu.this, todo.class)));
-        // menuAchievements.setOnClickListener(v -> startActivity(new Intent(menu.this, achievements.class)));
+         menuAchievements.setOnClickListener(v -> startActivity(new Intent(menu.this, achievements.class)));
          menuChallenge.setOnClickListener(v -> startActivity(new Intent(menu.this, ChallengeActivity.class)));
-        // menuComm.setOnClickListener(v -> startActivity(new Intent(menu.this, community.class)));
-        // menuLeader.setOnClickListener(v -> startActivity(new Intent(menu.this, lead.class)));
-        // menuAna.setOnClickListener(v -> startActivity(new Intent(menu.this, analytics.class)));
+        menuComm.setOnClickListener(v -> startActivity(new Intent(menu.this, community.class)));
+        menuLeader.setOnClickListener(v -> startActivity(new Intent(menu.this, leaderboard.class)));
+         menuAna.setOnClickListener(v -> startActivity(new Intent(menu.this, analytics.class)));
     }
 }

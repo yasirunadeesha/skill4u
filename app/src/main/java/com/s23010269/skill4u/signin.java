@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.widget.*;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;  // Add this import
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
@@ -14,6 +15,9 @@ import androidx.core.content.ContextCompat;
 
 import com.google.firebase.database.*;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.Executor;
 
 public class signin extends AppCompatActivity {
@@ -127,7 +131,6 @@ public class signin extends AppCompatActivity {
             return;
         }
 
-        // Check if fingerprint login is enabled for this user
         databaseRef.child(username).child("fingerprintEnabled")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -168,8 +171,38 @@ public class signin extends AppCompatActivity {
     private void saveLoginAndGoHome(String username) {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("USERNAME", username);
-        editor.putString("USERID", username); // Username is treated as ID
+        editor.putString("USERID", username);
         editor.apply();
+
+        // Save login time and increment daily login count
+        String currentDate = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date());
+        String currentTime = new SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(new Date());
+
+        DatabaseReference userLoginsRef = databaseRef.child(username).child("loginHistory").child(currentDate);
+        DatabaseReference loginCountRef = databaseRef.child(username).child("dailyLoginCount").child(currentDate);
+
+        // Push the login time
+        userLoginsRef.push().setValue(currentTime);
+
+        // Increment login count
+        loginCountRef.runTransaction(new Transaction.Handler() {
+            @NonNull
+            @Override
+            public Transaction.Result doTransaction(@NonNull MutableData currentData) {
+                Integer count = currentData.getValue(Integer.class);
+                if (count == null) {
+                    currentData.setValue(1);
+                } else {
+                    currentData.setValue(count + 1);
+                }
+                return Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+                // Optional: handle completion
+            }
+        });
 
         Toast.makeText(signin.this, "Login successful", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(signin.this, home.class);

@@ -7,29 +7,292 @@
     android:background="@drawable/bc_theme"
     tools:context=".analytics">
 
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Analytics"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.356"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023" />
-
+    <!-- Menu button -->
     <ImageView
         android:id="@+id/openmenu"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
         app:srcCompat="@drawable/menu" />
+
+    <!-- title -->
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Analytics"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toEndOf="@id/openmenu"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Scroll view -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/textView7"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- analytics cards -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
+
+            <!-- Calendar -->
+            <CalendarView
+                android:id="@+id/calendarView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/greeting_background"
+                android:dateTextAppearance="@style/CalendarDateText"
+                android:weekDayTextAppearance="@style/CalendarWeekText" />
+
+            <!-- Streaks -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/streaksCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/greeting_background"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Current streak -->
+                    <TextView
+                        android:id="@+id/currentStreakTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Streak: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Best streak -->
+                    <TextView
+                        android:id="@+id/bestStreakTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Best Streak: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Skills completed (week / month / year) -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/skillsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardElevation="6dp"
+                app:cardCornerRadius="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/greeting_background"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <TextView
+                        android:id="@+id/skillsCompletedHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Skills Completed"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Week -->
+                    <TextView
+                        android:id="@+id/skillsWeekTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="This Week: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <!-- Month -->
+                    <TextView
+                        android:id="@+id/skillsMonthTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="This Month: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <!-- Year -->
+                    <TextView
+                        android:id="@+id/skillsYearTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="This Year: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Total Points -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/totalPointsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/greeting_background"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="16dp">
+
+                    <!-- Label + value -->
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/totalPointsLabel"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Total Points"
+                            android:textColor="@android:color/white"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/totalPointsValue"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:text="0"
+                            android:textColor="@android:color/white"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Achievements list -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/achievementsCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:id="@+id/achievements_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/greeting_background"
+                    android:orientation="vertical"
+                    android:padding="12dp">
+
+                    <!-- Header -->
+                    <TextView
+                        android:id="@+id/achievementsHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingBottom="8dp"
+                        android:text="Achievements"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Daily summary -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/dailyCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/greeting_background"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <!-- Header -->
+                    <TextView
+                        android:id="@+id/dailyDataHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Daily Summary for Selected Date"
+                        android:textColor="@android:color/white"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <!-- Daily points -->
+                    <TextView
+                        android:id="@+id/dailyPointsTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Points Earned: 0"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+
+                    <!-- Daily active time -->
+                    <TextView
+                        android:id="@+id/dailyActiveTimeTextView"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Active Time: 0 min"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

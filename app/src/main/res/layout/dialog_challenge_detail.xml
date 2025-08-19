@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#121212"
     android:padding="24dp">
 
+    <!-- Close Button -->
     <ImageView
         android:id="@+id/closeButton"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/back"
+        android:src="@drawable/close"
         android:contentDescription="Close"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
+    <!-- Challenge Title -->
     <TextView
         android:id="@+id/dialogChallengeTitle"
         android:layout_width="0dp"
@@ -23,11 +26,12 @@
         android:textSize="22sp"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintTop_toBottomOf="@id/closeButton"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@id/closeButton"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        android:layout_marginStart="16dp" />
 
+    <!-- Difficulty -->
     <TextView
         android:id="@+id/dialogChallengeDifficulty"
         android:layout_width="wrap_content"
@@ -37,8 +41,21 @@
         android:textColor="#FFB74D"
         app:layout_constraintTop_toBottomOf="@id/dialogChallengeTitle"
         app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="12dp" />
+
+    <!-- Points -->
+    <TextView
+        android:id="@+id/dialogChallengePoints"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Points: 50"
+        android:textColor="#2196F3"
+        android:textSize="16sp"
+        app:layout_constraintTop_toBottomOf="@id/dialogChallengeDifficulty"
+        app:layout_constraintStart_toStartOf="parent"
         android:layout_marginTop="8dp" />
 
+    <!-- Description -->
     <TextView
         android:id="@+id/dialogChallengeDescription"
         android:layout_width="0dp"
@@ -46,12 +63,31 @@
         android:text="Solve 5 easy LeetCode problems in one week. Track your progress and challenge your friends!"
         android:textSize="16sp"
         android:textColor="#CCCCCC"
-        app:layout_constraintTop_toBottomOf="@id/dialogChallengeDifficulty"
+        android:lineSpacingExtra="2dp"
+        android:ellipsize="none"
+        android:scrollbars="vertical"
+        app:layout_constraintTop_toBottomOf="@id/dialogChallengePoints"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/dialogChallengeUsersJoined"
+        app:layout_constraintBottom_toTopOf="@id/dialogRelatedLinks"
         android:layout_marginTop="12dp" />
 
+    <!-- Related Links -->
+    <TextView
+        android:id="@+id/dialogRelatedLinks"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Related Links: link1, link2"
+        android:textSize="14sp"
+        android:textColor="#82B1FF"
+        android:autoLink="web"
+        android:linksClickable="true"
+        app:layout_constraintBottom_toTopOf="@id/dialogChallengeUsersJoined"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="8dp" />
+
+    <!-- Users Joined -->
     <TextView
         android:id="@+id/dialogChallengeUsersJoined"
         android:layout_width="wrap_content"
@@ -63,18 +99,18 @@
         app:layout_constraintStart_toStartOf="parent"
         android:layout_marginBottom="16dp" />
 
+    <!-- Join Button -->
     <Button
         android:id="@+id/joinButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:backgroundTint="#2196F3"
         android:text="Join Challenge"
         android:textAllCaps="false"
-        android:textSize="16sp"
         android:textColor="#000000"
-        android:backgroundTint="#76FF03"
+        android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

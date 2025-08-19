@@ -21,7 +21,7 @@ public class signup extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signup);
 
-        // ✅ Test Firebase connection
+        // Test Firebase connection
         FirebaseDatabase.getInstance().getReference("DebugTest").setValue("Connected");
 
         // Initialize Views

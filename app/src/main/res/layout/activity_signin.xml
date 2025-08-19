@@ -1,35 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@drawable/bc_theme_blue"
     tools:context=".signin">
 
+    <!-- Logo -->
     <ImageView
-        android:id="@+id/imageView5"
-        android:layout_width="985dp"
-        android:layout_height="1103dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:id="@+id/imageView6"
+        android:layout_width="277dp"
+        android:layout_height="256dp"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.981"
-        app:srcCompat="@drawable/img_theme_bg_blue"
-        tools:layout_editor_absoluteX="-307dp" />
-
-    <Button
-        android:id="@+id/signin"
-        android:layout_width="127dp"
-        android:layout_height="53dp"
-        android:backgroundTint="#2196F3"
-        android:text="Sign in"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.133"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.163" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.128"
+        app:srcCompat="@drawable/logo" />
 
+    <!-- Welcome Text below the logo -->
+    <TextView
+        android:id="@+id/textView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Welcome Back"
+        android:textAlignment="center"
+        android:textColor="#FFFFFF"
+        android:textSize="34sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Username input field -->
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="335dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edittext_border"
+        android:ems="10"
+        android:hint="Enter Your Username"
+        android:inputType="text"
+        android:paddingStart="16dp"
+        android:textColor="#FFFFFF"
+        android:textColorHint="#FFFFFF"
+        app:layout_constraintBottom_toTopOf="@+id/password"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.513" />
+
+    <!-- Password input field -->
     <EditText
         android:id="@+id/password"
         android:layout_width="336dp"
@@ -42,42 +68,26 @@
         android:paddingStart="16dp"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="@+id/username"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="@+id/username"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintEnd_toEndOf="@+id/username"
+        app:layout_constraintHorizontal_bias="1.0" />
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="277dp"
-        android:layout_height="256dp"
+    <!-- Sign in Button -->
+    <Button
+        android:id="@+id/signin"
+        android:layout_width="127dp"
+        android:layout_height="53dp"
+        android:backgroundTint="#1C6EA4"
+        android:text="Sign in"
+        app:layout_constraintTop_toBottomOf="@+id/password"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.128"
-        app:srcCompat="@drawable/logo" />
+        app:layout_constraintHorizontal_bias="0.133"
+        app:layout_constraintVertical_bias="0.163" />
 
-    <EditText
-        android:id="@+id/username"
-        android:layout_width="335dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="16dp"
-
-        android:background="@drawable/edittext_border"
-        android:ems="10"
-        android:hint="Enter Your Username"
-        android:inputType="text"
-        android:paddingStart="16dp"
-        android:textColor="#FFFFFF"
-        android:textColorHint="#FFFFFF"
-        app:layout_constraintBottom_toTopOf="@+id/password"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.513"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
+    <!-- Fingerprint Login Option -->
     <TextView
         android:id="@+id/fingerprint"
         android:layout_width="wrap_content"
@@ -85,25 +95,26 @@
         android:text="Fingerprint Login"
         android:textColor="#FFFFFF"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/password"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/signin"
         app:layout_constraintTop_toBottomOf="@+id/password"
-        app:layout_constraintVertical_bias="0.23" />
+        app:layout_constraintStart_toEndOf="@+id/signin"
+        app:layout_constraintEnd_toEndOf="@+id/password"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.23"
+        app:layout_constraintHorizontal_bias="1.0" />
 
     <TextView
         android:id="@+id/textView4"
         android:layout_width="18dp"
         android:layout_height="17dp"
         android:text="or"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.861" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.861"
+        app:layout_constraintHorizontal_bias="0.498" />
 
+    <!-- Create New Account link -->
     <TextView
         android:id="@+id/register"
         android:layout_width="wrap_content"
@@ -111,24 +122,11 @@
         android:text="Create New Account"
         android:textColor="#FFFFFF"
         android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:layout_constraintVertical_bias="0.396" />
-
-    <TextView
-        android:id="@+id/textView6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="Welcome Back"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-        android:textSize="34sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.396"
+        app:layout_constraintHorizontal_bias="0.497" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

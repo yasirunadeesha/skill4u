@@ -8,12 +8,13 @@
     android:orientation="vertical"
     tools:context=".friend">
 
-    <!-- Top bar -->
+    <!-- menu button, title, and username -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingVertical="12dp">
 
+        <!-- Menu button -->
         <ImageView
             android:id="@+id/openmenu"
             android:layout_width="40dp"
@@ -22,16 +23,21 @@
             android:layout_marginStart="16dp"
             android:src="@drawable/menu" />
 
+        <!-- title -->
         <TextView
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="22dp"
+            android:layout_toEndOf="@+id/openmenu"
             android:text="Friends"
+            android:textAlignment="viewStart"
             android:textColor="#FFFFFF"
-            android:textSize="30sp"
+            android:textSize="24sp"
             android:textStyle="bold" />
 
+        <!-- Username display -->
         <TextView
             android:id="@+id/username_display"
             android:layout_width="wrap_content"
@@ -45,59 +51,72 @@
             android:textStyle="italic" />
     </RelativeLayout>
 
-    <!-- Tabs -->
-    <LinearLayout
+    <!-- My Friends / Add Friends / Requests -->
+    <RadioGroup
+        android:id="@+id/friendsSegmentGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"
+        android:orientation="horizontal"
         android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp">
 
-        <TextView
-            android:id="@+id/your_friends"
-            android:layout_width="wrap_content"
+        <!-- My Friends tab -->
+        <RadioButton
+            android:id="@+id/rb_my_friends"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/todorad"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/segmented_button_left_background"
+            android:button="@null"
+            android:checked="true"
+            android:gravity="center"
             android:padding="8dp"
             android:text="My Friends"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/segmented_button_text_color"
             android:textSize="18sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/add_friends"
-            android:layout_width="wrap_content"
+        <!-- Add Friends tab -->
+        <RadioButton
+            android:id="@+id/rb_add_friends"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/todorad"
-            android:padding="8dp"
+            android:layout_weight="1"
             android:text="Add Friends"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/segmented_button_text_color"
+            android:background="@drawable/segmented_button_center_background"
+            android:button="@null"
+            android:gravity="center"
+            android:padding="8dp"
             android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"/>
 
-        <TextView
-            android:id="@+id/friend_request"
-            android:layout_width="wrap_content"
+        <!-- Friend Requests tab -->
+        <RadioButton
+            android:id="@+id/rb_friend_requests"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="8dp"
-            android:background="@drawable/todorad"
+            android:layout_marginEnd="8dp"
+            android:layout_weight="1"
+            android:background="@drawable/segmented_button_right_background"
+            android:button="@null"
+            android:gravity="center"
             android:padding="8dp"
             android:text="Requests"
-            android:textColor="#FFFFFF"
+            android:textColor="@color/segmented_button_text_color"
             android:textSize="18sp"
             android:textStyle="bold" />
-    </LinearLayout>
+    </RadioGroup>
 
-    <!-- Content sections -->
+    <!-- Main content -->
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
-        <!-- My Friends -->
+        <!-- My Friends section -->
         <LinearLayout
             android:id="@+id/my_friends_container"
             android:layout_width="match_parent"
@@ -112,7 +131,7 @@
                 android:layout_margin="16dp" />
         </LinearLayout>
 
-        <!-- Add Friends -->
+        <!-- Add Friends section -->
         <LinearLayout
             android:id="@+id/add_friends_container"
             android:layout_width="match_parent"
@@ -127,7 +146,7 @@
                 android:layout_margin="16dp" />
         </LinearLayout>
 
-        <!-- Friend Requests -->
+        <!-- Friend Requests section -->
         <LinearLayout
             android:id="@+id/friend_request_container"
             android:layout_width="match_parent"

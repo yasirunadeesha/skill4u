@@ -19,4 +19,5 @@
     <item name="profileText" type="id" />
     <item name="menu_friends" type="id" />
     <item name="menu_friend" type="id" />
+    <item name="leaderboardRecyclerView" type="id" />
 </resources>

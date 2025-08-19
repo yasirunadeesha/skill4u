@@ -1,141 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#000000"
+    android:background="@drawable/bc_theme"
     tools:context=".profile">
 
-    <ImageView
-        android:id="@+id/imageView7"
-        android:layout_width="804dp"
-        android:layout_height="967dp"
-        android:layout_marginBottom="60dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:srcCompat="@drawable/img_theme_bg_green"
-        tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="-197dp" />
-
+    <!-- Back Button -->
     <ImageView
         android:id="@+id/gotohome"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.043"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_margin="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Go Home"
+        android:padding="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
         app:srcCompat="@drawable/left_arrow" />
 
-    <ImageView
-        android:id="@+id/logout"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.956"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.023"
-        app:srcCompat="@drawable/powerbutton" />
-
-    <ImageView
-        android:id="@+id/imageView13"
-        android:layout_width="110dp"
-        android:layout_height="110dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.053"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.149"
-        app:srcCompat="@drawable/profile" />
-
-    <TextView
-        android:id="@+id/get_username"
-        android:layout_width="125dp"
-        android:layout_height="34dp"
-        android:text="TextView"
-        android:textColor="#8A8A8A"
-        android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.539"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.143" />
-
-    <TextView
-        android:id="@+id/get_name"
-        android:layout_width="254dp"
-        android:layout_height="48dp"
-        android:text="TextView"
-        android:textColor="#FFFFFF"
-        android:textSize="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.98"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.171" />
-
-    <TextView
-        android:id="@+id/fingertext"
-        android:layout_width="wrap_content"
+    <!-- profile image and user info -->
+    <LinearLayout
+        android:id="@+id/profileHeader"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="your posts"
-        android:textSize="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.064"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:padding="16dp"
+        app:layout_constraintTop_toBottomOf="@id/gotohome"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.641" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/badges"
-        android:layout_width="wrap_content"
+        <!-- Profile Image -->
+        <ImageView
+            android:id="@+id/imageView13"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/profile"
+            android:contentDescription="Profile Picture"
+            android:scaleType="centerCrop"
+            android:background="@drawable/circle_border"
+            android:padding="4dp" />
+
+        <!-- User info: Full Name and Username -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp">
+
+            <TextView
+                android:id="@+id/get_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Full Name"
+                android:textColor="@android:color/white"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/get_username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="username"
+                android:textColor="#AAAAAA"
+                android:textSize="16sp" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <!-- Enable Fingerprint -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/fingerprintCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Badges"
-        android:textSize="35dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.054"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="4dp"
+        android:layout_margin="16dp"
+        app:layout_constraintTop_toBottomOf="@id/profileHeader"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.44"
-        tools:ignore="DuplicateIds" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <TextView
-        android:id="@+id/fingertext"
-        android:layout_width="284dp"
-        android:layout_height="39dp"
-        android:text="enable fingerprint"
-        android:textColor="#FFFFFF"
-        android:textSize="25dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.131"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.329"
-        tools:ignore="DuplicateIds" />
+        <!-- label and switch -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="16dp">
 
-    <Switch
-        android:id="@+id/fingerprint_on"
-        android:layout_width="61dp"
-        android:layout_height="36dp"
-        android:backgroundTint="#00FF0A"
+            <!-- Fingerprint label -->
+            <TextView
+                android:id="@+id/fingertext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Enable Fingerprint"
+                android:textColor="@android:color/black"
+                android:textSize="18sp" />
+
+            <!-- Fingerprint toggle switch -->
+            <Switch
+                android:id="@+id/fingerprint_on"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Contact Admin, Delete Account, Logout -->
+    <LinearLayout
+        android:id="@+id/actionsLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="196dp"
+        android:orientation="vertical"
+        android:padding="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:thumbTint="#2196F3"
-        android:trackTint="#90CAF9"
-        app:layout_constraintVertical_bias="0.332"
-        tools:ignore="UseSwitchCompatOrMaterialXml" />
+        app:layout_constraintTop_toBottomOf="@id/fingerprintCard"
+        app:layout_constraintVertical_bias="0.0">
+
+        <!-- Contact Admin / Support Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/contactAdmin"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Contact Admin/Support" />
+
+        <!-- Delete Account Button with red outline -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/deleteAccount"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Delete Account"
+            android:textColor="#FB1100"
+            app:strokeColor="#FB1100" />
+
+        <!-- Sign Out Button with red background -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/logout"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:backgroundTint="#FB1100"
+            android:text="Sign Out"
+            android:textColor="@android:color/white" />
+    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

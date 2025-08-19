@@ -9,7 +9,7 @@
     <!-- Background Image -->
     <item>
         <bitmap
-            android:src="@drawable/img_theme_bg_lemon_green"
+            android:src="@drawable/img_theme_bg_blue"
             android:gravity="center"
             android:tileMode="disabled" />
     </item>
